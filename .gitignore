@@ -1,0 +1,4 @@
+venv/
+chromedriver.exe
+*.log
+.vscode/
