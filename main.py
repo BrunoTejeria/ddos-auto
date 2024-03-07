@@ -15,6 +15,7 @@ import time
 import json
 
 from pages import Pages
+from config import Config
 
 
 # TODO: hacer que saque estos datos de el config.json

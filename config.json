@@ -4,10 +4,18 @@
         "time": 300,
         "method": "DNS"
     },
-    "proxies": [
-        "host:port",
-        "host:port"
-    ],
+    "selenium": {
+        "proxies": [
+            "host:port",
+            "host:port"
+        ],
+        "drivers": {
+            "chrome": "./drivers/chromedriver.exe",
+            "firefox": "./drivers/firefoxdriver.exe"
+        },
+        "headless": true,
+        "log": true
+    },
     "accounts": [
         [
             "testaccount",
@@ -17,5 +25,17 @@
             "testaccount2",
             "test2"
         ]
+    ],
+    "cookies": [
+        {
+            "key": "key",
+            "value": "value",
+            "exp": "exp"
+        },
+        {
+            "key": "key",
+            "value": "value",
+            "exp": "exp"
+        }
     ]
 }
