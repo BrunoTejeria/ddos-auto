@@ -1,0 +1,17 @@
+{
+    "attack": {
+        "ip": "1.1.1.1",
+        "time": 300,
+        "method": "DNS"
+    },
+    "accounts": [
+        [
+            "testaccount",
+            "test"
+        ],
+        [
+            "testaccount2",
+            "test2"
+        ]
+    ]
+}

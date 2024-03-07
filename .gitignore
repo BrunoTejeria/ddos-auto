@@ -3,3 +3,5 @@ venv/
 *.log
 .vscode/
 setEnvVars.ps1
+__pycache__/
+config_debug.json
