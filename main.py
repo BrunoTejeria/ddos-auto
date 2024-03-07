@@ -50,12 +50,14 @@ info = {
     "method": "DNS"
 }
 
+
+# TODO: mover a otro lado esto que sea una clase de configuración y que hallan distintos presets
 logger = logging.getLogger('selenium')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler("./debug.log")
 logger.addHandler(handler)
 
-
+# TODO: que se pueda elegir diferente webdriver
 firefox_options = webdriver.FirefoxOptions()
 firefox_options.add_argument("--headless")
 
