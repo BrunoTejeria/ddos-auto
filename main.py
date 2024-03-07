@@ -36,7 +36,6 @@ user_agents = [
 cookies = [
     {
         "name": "UID",
-        #"exp": os.getenv("coookie_exp"),
         "value": os.getenv("cookie")
     }
 ]
