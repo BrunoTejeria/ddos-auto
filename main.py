@@ -59,12 +59,8 @@ info = {
 
 # TODO: que se pueda elegir diferente webdriver
 firefox_options = webdriver.FirefoxOptions()
-<<<<<<< HEAD
-#firefox_options.add_argument("--headless")
-=======
-# firefox_options.add_argument("--headless")
 
->>>>>>> db07b034efca03dd22c91cf23097d4cb6901861e
+firefox_options.add_argument("--headless")
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
 driver = webdriver.Firefox(service=service, options=firefox_options)
