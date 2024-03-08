@@ -48,6 +48,7 @@ class Selenium():
         EdgeService
     )
 
+
     def __init__(self, driver: webdriver) -> None:
         self.config = Config()
         self.services = {
@@ -55,7 +56,14 @@ class Selenium():
             "firefox": self.FirefoxService(executable_path=self.config.drivers["firefox"], log_output=self.config.logs["selenium"])
         }
 
-    def set_log(settings: Schemas.Config.Selenium.log_settings) -> str: ...
-    def set_proxies(settings: Schemas.Config.Selenium.proxies_settings) -> bool: ...
+    def set_log(logger: logging.getLogger) -> str:
+        logger = logging.getLogger('selenium')
+        logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler("./debug.log")
+        logger.addHandler(handler)
+
+    def set_proxies() -> bool: ...
     def toggle_headless() -> bool: ...
+
+
 
