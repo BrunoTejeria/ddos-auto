@@ -16,13 +16,15 @@ import json
 
 from pages import Pages
 from config import Config
+
 from rich.console import Console
+config = Config()
 
 
-# TODO: hacer que saque estos datos de el config.json
-# Poner env vars si quiere login por formulario
-username = os.getenv("username")
-password = os.getenv("password")
+
+username = config.accounts[0][0]
+password = config.accounts[0][1]
+
 
 drivers = {
     "geckoDriver": "./drivers/geckodriver.exe",
@@ -53,14 +55,16 @@ info = {
 
 
 # TODO: mover a otro lado esto que sea una clase de configuración y que hallan distintos presets
-logger = logging.getLogger('selenium')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler("./debug.log")
-logger.addHandler(handler)
+
 
 # TODO: que se pueda elegir diferente webdriver
 firefox_options = webdriver.FirefoxOptions()
+<<<<<<< HEAD
 #firefox_options.add_argument("--headless")
+=======
+# firefox_options.add_argument("--headless")
+
+>>>>>>> db07b034efca03dd22c91cf23097d4cb6901861e
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
 driver = webdriver.Firefox(service=service, options=firefox_options)
@@ -196,4 +200,9 @@ while True:
     except Exception as e:
         print(f"Error en ejecución: {i}\n   Error: {e}")
     finally:
+<<<<<<< HEAD
         pass
+=======
+        i = i + 1
+
+>>>>>>> db07b034efca03dd22c91cf23097d4cb6901861e

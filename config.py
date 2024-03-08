@@ -48,6 +48,7 @@ class Selenium():
         EdgeService
     )
 
+
     def __init__(self, driver: webdriver) -> None:
         self.config = Config()
         self.services = {
@@ -56,4 +57,6 @@ class Selenium():
         }
 
     def toggle_headless() -> bool: ...
+
+
 
