@@ -1,8 +1,10 @@
 from selenium import webdriver
 
+import logging
 from typing import Union
 import json
 
+from utils.schemas import Schemas
 
 class Config:
     def __init__(self, *args, **kwds) -> None:
@@ -21,6 +23,8 @@ class Config:
 
     def cookies(self) -> dict:
         return self.config["cookies"]
+    def logs(self) -> dict:
+        return self.config["logs"]
 
 
     # NOTE: no se si poner que se guarde como diccionario o lista
@@ -36,10 +40,22 @@ class Config:
 
 a = Config()
 
+
 class Selenium():
+    from selenium.webdriver import (
+        ChromeService,
+        FirefoxService,
+        EdgeService
+    )
+
     def __init__(self, driver: webdriver) -> None:
         self.config = Config()
-    
-    def set_proxies() -> bool: ...
+        self.services = {
+            "chrome": self.ChromeService(executable_path=self.config.drivers["chrome"], log_output=self.config.logs["selenium"]),
+            "firefox": self.FirefoxService(executable_path=self.config.drivers["firefox"], log_output=self.config.logs["selenium"])
+        }
+
+    def set_log(settings: Schemas.Config.Selenium.log_settings) -> str: ...
+    def set_proxies(settings: Schemas.Config.Selenium.proxies_settings) -> bool: ...
     def toggle_headless() -> bool: ...
 
