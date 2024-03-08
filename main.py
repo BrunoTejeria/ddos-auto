@@ -16,15 +16,10 @@ import json
 
 from pages import Pages
 from config import Config
-
 from rich.console import Console
-config = Config()
 
-
-
-username = config.accounts[0][0]
-password = config.accounts[0][1]
-
+username = "testaccount"
+password = "123456789"
 
 drivers = {
     "geckoDriver": "./drivers/geckodriver.exe",
@@ -35,8 +30,6 @@ user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
 ]
 
-
-# TODO: hacer un sistema de cookies con diferentes cuentas que las extraiga de un .json
 cookies = [
     {
         "name": "UID",
@@ -44,8 +37,6 @@ cookies = [
     }
 ]
 
-
-# TODO: hacer que saque estos datos de config.json
 info = {
     "host": "1.1.1.1",
     "port": 443,
@@ -53,14 +44,13 @@ info = {
     "method": "DNS"
 }
 
+logger = logging.getLogger('selenium')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler("./debug.log")
+logger.addHandler(handler)
 
-# TODO: mover a otro lado esto que sea una clase de configuración y que hallan distintos presets
-
-
-# TODO: que se pueda elegir diferente webdriver
 firefox_options = webdriver.FirefoxOptions()
-
-firefox_options.add_argument("--headless")
+#firefox_options.add_argument("--headless")
 
 service = FirefoxService(executable_path=drivers["geckoDriver"], log_output="./debug.log")
 driver = webdriver.Firefox(service=service, options=firefox_options)
@@ -196,9 +186,4 @@ while True:
     except Exception as e:
         print(f"Error en ejecución: {i}\n   Error: {e}")
     finally:
-<<<<<<< HEAD
         pass
-=======
-        i = i + 1
-
->>>>>>> db07b034efca03dd22c91cf23097d4cb6901861e
