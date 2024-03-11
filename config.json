@@ -1,6 +1,7 @@
 {
     "attack": {
         "ip": "1.1.1.1",
+        "port": 443,
         "time": 300,
         "method": "DNS"
     },
@@ -11,8 +12,15 @@
         ],
         "drivers": {
             "chrome": "./drivers/chromedriver.exe",
-            "firefox": "./drivers/firefoxdriver.exe"
+            "firefox": "./drivers/geckodriver.exe",
+            "edge": "./drivers/msedgedriver.exe"
         },
+        "logs": {
+            "service": "./logs/selenium/service.log",
+            "options": "./logs/selenium/options.log"
+        },
+        "driver": "firefox",
+        "port": 4444,
         "headless": true,
         "log": true
     },
@@ -20,10 +28,6 @@
         [
             "testaccount",
             "test"
-        ],
-        [
-            "testaccount2",
-            "test2"
         ]
     ],
     "cookies": [
