@@ -18,6 +18,7 @@ from rich.console import Console
 from bot import Bot
 from config import Config
 from utils.presets import Presets
+import utils.start
 import subprocess
 import logging
 
