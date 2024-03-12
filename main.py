@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver import ChromeService, FirefoxService
+from selenium.webdriver import ChromeService, FirefoxService, FirefoxOptions
 from selenium.common.exceptions import *
 
 import os
@@ -19,8 +19,12 @@ from bot import Bot
 from config import Config
 from utils.presets import Presets
 import subprocess
+import logging
 
-
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler("./logs/selenium/debug.log")
+logger.addHandler(handler)
 
 config = Config()
 
@@ -34,26 +38,25 @@ logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler("./logs/selenium/selenium.log")
 logger.addHandler(handler)"""
 
-presets = Presets("chrome")
-service, options = presets.default()
+presets = Presets(config.driver)
+service, options = presets.debug()
 
 
 
-driver = webdriver.Firefox(service=service, options=options)
+try:
+    driver = webdriver.Chrome(service=service, options=options)
+except AttributeError as e:
+    raise e
 
-# TODO: CAMBIAR ESTO
-user_agents = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
-]
 
-# TODO: CAMBIAR ESTO
-cookies = [
-    {
-        "name": "UID",
-        "value": os.getenv("cookie")
-    }
-]
-
+info = {
+    "cookies": [
+        ...
+    ],
+    "username": config.accounts[0][0],
+    "password": config.accounts[0][1],
+    "userAgent": config.user_agents[0]
+}
 
 
 
@@ -74,14 +77,7 @@ def get_user_input():
 
 ip, port = get_user_input()
 
-info = {
-    "cookies": [
 
-    ],
-    "username": config.accounts[0][0],
-    "password": config.accounts[0][1],
-    "userAgent": ...
-}
 
 bot = Bot(driver=driver, info=info)
 bot.login_form()
@@ -90,7 +86,7 @@ bot.close_button()
 
 i = 1
 while True:
-    i = i + 1
+    
     try:
         bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
         print(f"ejecución: {i}")
@@ -99,4 +95,4 @@ while True:
     except Exception as e:
         print(f"Error en ejecución: {i}\n   Error: {e}")
     finally:
-        pass
+        i = i + 1

@@ -6,16 +6,16 @@ from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions
 
 from config import Config
 from utils import exceptions
-
-config = Config()
-selenium_config = ...
+from config import Selenium
 
 
-class Presets():
+class Presets(Selenium):
 	def __init__(
 		self,
 		driver_type: Literal["chrome", "firefox", "edge"]
 	) -> None:
+		self.config = Config()
+		self.driver_type = driver_type
 		if driver_type == "chrome":
 			self.Service = ChromeService()
 			self.Options = ChromeOptions()
@@ -51,6 +51,8 @@ class Presets():
 			Tuple[FirefoxService, FirefoxOptions],
 			Tuple[EdgeService, EdgeOptions]
 		]:
+		self.mode = self.test_preset.__name__
+
 		# Configuración de Service
 		try:
 			...
@@ -69,19 +71,18 @@ class Presets():
 		self,
 		**kwargs
 	) -> Any:
+		self.mode = self.default.__name__
 
 		# Configuración de Service
 		try:
-			self.Service.log_output = config.selenium_logs["service"]
-			self.Service.port = config.port
+			self.Service.port = self.config.port
 			...
 		except Exception as e:
 			raise e
 
 		# Configuración de Options
 		try:
-			self.Options.add_argument("--headless")
-			...
+			self.headless()
 		except Exception as e:
 			raise e
 
@@ -95,16 +96,18 @@ class Presets():
 			Tuple[FirefoxService, FirefoxOptions],
 			Tuple[EdgeService, EdgeOptions]
 		]:
+		self.mode = self.debug.__name__
 		# Configuración de Service
 		try:
-			self.Service.log_output = config.selenium_logs["service"]
+			...
 		except Exception as e:
 			raise e
 
 		# Configuración de Options
 		try:
+			self.change_port()
 			self.Options.set_capability(self.capability["logging"], {"browser": "ALL", "performance": "ALL"})
-			self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": config.selenium_logs["options"]}})
+			self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": self.config.selenium_logs["options"]}})
 			...
 		except Exception as e:
 			raise e
