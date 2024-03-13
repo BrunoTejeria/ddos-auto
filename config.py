@@ -6,7 +6,6 @@ import logging
 from typing import Union, Literal
 import json
 
-from utils.schemas import Schemas
 
 class Config:
     def __init__(self, *args, **kwds) -> None:
@@ -22,6 +21,7 @@ class Config:
         self.user_agents = self.user_agents()
         self.selenium_logs = self.selenium_logs()
         self.presets = self.presets()
+        self.logs = self.logs()
 
     def attack(self) -> dict:
         return self.config["attack"]
@@ -75,26 +75,25 @@ class Selenium():
     # Cambiar puerto que se una en selenium
     def change_port(self) -> Union[bool, None]: self.Service.port = self.config.presets[self.mode]["port"]
 
+config = Config()
 
 class SetSeleniumLogger:
-    def __init__(self) -> None:
-        self.logger: logging
 
+    def __init_subclass__(cls) -> None:
+        cls.logger: logging
         # Configurar logger para selenium
-        self.logger.getLogger('selenium')
+        cls.logger = logging.getLogger('selenium')
 
         # Handler para agregar archivo de output
-        handler = logging.FileHandler("./logs/selenium/selenium.log")
-        self.logger.addHandler(handler)
-
+        handler = logging.FileHandler(config.logs["selenium"])
+        cls.logger.addHandler(handler)
     #------------------------------------------
     # Funciones para setear nivel de logger
     #------------------------------------------
     #
-    def critical(self) ->  None: self.logger.setLevel(logging.CRITICAL) # Set critical
-    def error(self)    ->  None: self.logger.setLevel(logging.ERROR) # Set error
-    def warning(self)  ->  None: self.logger.setLevel(logging.WARNING) # Set warning
-    def info(self)     ->  None: self.logger.setLevel(logging.INFO) # Set info
-    def debug(self)    ->  None: self.logger.setLevel(logging.DEBUG) # Set debug
-    def notset(self)   ->  None: self.logger.setLevel(logging.NOTSET) # Set notset
-
+    def log_critical(self) ->  None: self.logger.setLevel(logging.CRITICAL) # Set critical
+    def log_error(self)    ->  None: self.logger.setLevel(logging.ERROR) # Set error
+    def log_warning(self)  ->  None: self.logger.setLevel(logging.WARNING) # Set warning
+    def log_info(self)     ->  None: self.logger.setLevel(logging.INFO) # Set info
+    def log_debug(self)    ->  None: self.logger.setLevel(logging.DEBUG) # Set debug
+    def log_notset(self)   ->  None: self.logger.setLevel(logging.NOTSET) # Set notset

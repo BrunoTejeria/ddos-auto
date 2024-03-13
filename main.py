@@ -1,26 +1,15 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver import ChromeService, FirefoxService, FirefoxOptions
 from selenium.common.exceptions import *
 
-import os
-import logging
-import requests
 import time
-import json
+import traceback
 from rich.console import Console
 
 from bot import Bot
 from config import Config
 from utils.presets import Presets
 import utils.start
-import subprocess
-import logging
+
 
 
 
@@ -81,6 +70,6 @@ while True:
         time.sleep(config.attack["time"])
         bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
     except Exception as e:
-        print(f"Error en ejecución: {i}\n   Error: {e}")
+        traceback.print_exc()
     finally:
         i = i + 1

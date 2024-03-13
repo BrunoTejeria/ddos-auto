@@ -3,18 +3,20 @@ from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions
 
 from typing import Any, Literal, Union, Tuple
 import logging
+import traceback
 
 from config import Config
 from utils import exceptions
-from config import Selenium
+from config import Selenium, SetSeleniumLogger
 
 
-class Presets(Selenium):
+class Presets(Selenium, SetSeleniumLogger):
 	def __init__(
 		self,
 		driver_type: Literal["chrome", "firefox", "edge"]
 	) -> None:
 		self.config = Config()
+		self.log_path = self.config.logs["selenium"]
 		self.driver_type = driver_type
 
 		if driver_type == "chrome":
@@ -60,17 +62,19 @@ class Presets(Selenium):
 		try:
 			...
 		except Exception as e:
-			raise e
+			traceback.print_exc()
 
 		# Configuración de Options
 		try:
 			...
 		except Exception as e:
-			raise e
+			traceback.print_exc()
 
-		self.logger = logging.getLogger('selenium')
-		self.logger.setLevel(logging.DEBUG)
-		self.handler = logging.FileHandler(self.config.logs["selenium"])
+		# Configurar logger
+		try:
+			self.log_error()
+		except Exception as e:
+			traceback.print_exc()
 
 		return self.Service, self.Options
 
@@ -85,13 +89,19 @@ class Presets(Selenium):
 			self.Service.port = self.config.port
 			...
 		except Exception as e:
-			raise e
+			traceback.print_exc()
 
 		# Configuración de Options
 		try:
 			self.headless()
 		except Exception as e:
-			raise e
+			traceback.print_exc()
+
+		# Configurar logger
+		try:
+			self.log_info()
+		except Exception as e:
+			traceback.print_exc()
 
 		return self.Service, self.Options
 
@@ -108,7 +118,7 @@ class Presets(Selenium):
 		try:
 			...
 		except Exception as e:
-			raise e
+			traceback.print_exc()
 
 		# Configuración de Options
 		try:
@@ -117,6 +127,12 @@ class Presets(Selenium):
 			self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": self.config.selenium_logs["options"]}})
 			...
 		except Exception as e:
-			raise e
+			traceback.print_exc()
+
+		# Configurar logger
+		try:
+			self.log_debug()
+		except Exception as e:
+			traceback.print_exc()
 
 		return self.Service, self.Options

@@ -9,6 +9,7 @@ import os
 import logging
 import requests
 import time
+import traceback
 
 from utils.pages import Pages
 
@@ -69,9 +70,8 @@ class Bot(Pages):
 
         try:
             self.restart_session()
-        except:
-            pass
-
+        except Exception as e:
+            traceback.print_exc()
     def get_running_attacks(self, cookies: dict):
         s = requests.session()
 
@@ -106,4 +106,4 @@ class Bot(Pages):
         time.sleep(0.2)
 
     def driver_quit(self) -> any:
-        driver.quit()
+        self.driver.quit()
