@@ -1,59 +1,59 @@
 {
-    "attack": {
-        "ip": "1.1.1.1",
-        "port": 443,
-        "time": 20,
-        "method": "DNS"
-    },
-    "selenium": {
-        "proxies": [
-            "host:port",
-            "host:port"
-        ],
-        "driversPath": {
-            "chrome": "./drivers/chromedriver.exe",
-            "firefox": "./drivers/geckodriver.exe",
-            "edge": "./drivers/msedgedriver.exe"
-        },
-        "logs": {
-            "service": "./logs/selenium/service.log",
-            "options": "./logs/selenium/options.log"
-        },
-        "driver": "chrome",
-        "presets": {
-            "debug": {
-                "port": 8640,
-                "headless": false
-            },
-            "default": {
-                "port": 4444,
-                "headless": true
-            },
-            "test_preset": {
-                "port": 4444,
-                "headless": true
-            }
-        }
-    },
     "accounts": [
         [
             "testaccount",
             "123456789"
         ]
     ],
+    "attack": {
+        "ip": "1.1.1.1",
+        "method": "DNS",
+        "port": 443,
+        "time": 20
+    },
     "cookies": [
         {
+            "exp": "exp",
             "key": "key",
-            "value": "value",
-            "exp": "exp"
+            "value": "value"
         },
         {
+            "exp": "exp",
             "key": "key",
-            "value": "value",
-            "exp": "exp"
+            "value": "value"
         }
     ],
     "logs": {
         "selenium": "./logs/selenium.log"
+    },
+    "selenium": {
+        "driver": "chrome",
+        "driversPath": {
+            "chrome": "./drivers/chromedriver.exe",
+            "edge": "./drivers/msedgedriver.exe",
+            "firefox": "./drivers/geckodriver.exe"
+        },
+        "logs": {
+            "options": "./logs/selenium/options.log",
+            "service": "./logs/selenium/service.log"
+        },
+        "presets": {
+            "debug": {
+                "headless": false,
+                "port": 8640
+            },
+            "default": {
+                "headless": true,
+                "port": 4444
+            },
+            "test_preset": {
+                "headless": true,
+                "port": 4444
+            }
+        },
+        "proxies": [
+            "host:port",
+            "host:port"
+        ]
     }
 }
