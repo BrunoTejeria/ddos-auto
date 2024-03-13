@@ -1,8 +1,8 @@
-from typing import Any, Literal, Union, Tuple
-
-from selenium import webdriver
 from selenium.webdriver import ChromeService, FirefoxService, EdgeService
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions
+
+from typing import Any, Literal, Union, Tuple
+import logging
 
 from config import Config
 from utils import exceptions
@@ -16,6 +16,7 @@ class Presets(Selenium):
 	) -> None:
 		self.config = Config()
 		self.driver_type = driver_type
+
 		if driver_type == "chrome":
 			self.Service = ChromeService()
 			self.Options = ChromeOptions()
@@ -43,6 +44,8 @@ class Presets(Selenium):
 		else:
 			raise exceptions.Value(f"driver type solo puede ser 'chrome', 'firefox' o 'edge' driver type: {driver_type}")
 
+		return
+
 	def test_preset(
 		self,
 		**kwargs
@@ -64,6 +67,10 @@ class Presets(Selenium):
 			...
 		except Exception as e:
 			raise e
+
+		self.logger = logging.getLogger('selenium')
+		self.logger.setLevel(logging.DEBUG)
+		self.handler = logging.FileHandler(self.config.logs["selenium"])
 
 		return self.Service, self.Options
 

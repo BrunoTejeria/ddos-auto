@@ -21,24 +21,11 @@ from utils.presets import Presets
 import subprocess
 import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler("./logs/selenium/debug.log")
-logger.addHandler(handler)
+
 
 config = Config()
 
-username = config.accounts[0][0]
-password = config.accounts[0][1]
-
-
-# TODO: CAMBIAR TODO ESTO Y MODULAR
-"""logger = logging.getLogger('selenium')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler("./logs/selenium/selenium.log")
-logger.addHandler(handler)"""
-
-presets = Presets(config.driver)
+presets = Presets(driver_type=config.driver)
 service, options = presets.debug()
 
 

@@ -66,9 +66,35 @@ class Selenium():
         self.Service: Union[ChromeService, FirefoxService, EdgeService]
         self.Options: Union[ChromeOptions, FirefoxOptions, EdgeOptions]
         self.mode: str
-
+    #------------------------------------------
+    # Funciones para cambiar configuraciones de selenium
+    #------------------------------------------
+    #
+    # Desactivar abrir ventana de navegador
     def headless(self) -> Union[bool, None]: self.Options.add_argument("--headless")
-    
-    def change_port(self) -> Union[bool, None]: 
-        print(self.mode)
-        self.Service.port = self.config.presets[self.mode]["port"]
+    # Cambiar puerto que se una en selenium
+    def change_port(self) -> Union[bool, None]: self.Service.port = self.config.presets[self.mode]["port"]
+
+
+class SetSeleniumLogger:
+    def __init__(self) -> None:
+        self.logger: logging
+
+        # Configurar logger para selenium
+        self.logger.getLogger('selenium')
+
+        # Handler para agregar archivo de output
+        handler = logging.FileHandler("./logs/selenium/selenium.log")
+        self.logger.addHandler(handler)
+
+    #------------------------------------------
+    # Funciones para setear nivel de logger
+    #------------------------------------------
+    #
+    def critical(self) ->  None: self.logger.setLevel(logging.CRITICAL) # Set critical
+    def error(self)    ->  None: self.logger.setLevel(logging.ERROR) # Set error
+    def warning(self)  ->  None: self.logger.setLevel(logging.WARNING) # Set warning
+    def info(self)     ->  None: self.logger.setLevel(logging.INFO) # Set info
+    def debug(self)    ->  None: self.logger.setLevel(logging.DEBUG) # Set debug
+    def notset(self)   ->  None: self.logger.setLevel(logging.NOTSET) # Set notset
+

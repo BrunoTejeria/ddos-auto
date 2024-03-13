@@ -5,3 +5,5 @@ venv/
 setEnvVars.ps1
 __pycache__/
 config_debug.json
+test.py
+build/
