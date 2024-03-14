@@ -12,9 +12,11 @@ import time
 import traceback
 
 from utils.pages import Pages
+from utils.execute_js import ExecuteJs
 
-class Bot(Pages):
-    def __init__(self, driver: webdriver.Chrome, info: dict) -> None:
+class Bot(Pages, ExecuteJs):
+    def __init__(self, driver: webdriver.Chrome, info: dict, main_logger: logging) -> None:
+        self.main_logger = main_logger
         self.driver = driver
         self.info = info
         self.driver.get("https://www.stressthem.se")
@@ -35,16 +37,23 @@ class Bot(Pages):
         self.close_button.click()
 
     def login_form(self) -> any:
-        self.login_page()
+        try:
+            self.login_page()
+            if EC.title_is("DDoS-Guard"):
+                print("Debes de solucionar el captcha para seguir si tiene modo con --headless cámbialo")
+                WebDriverWait(self.driver, 100).until(EC.title_is("Login Portal"))
 
-        username_form = self.driver.find_element(By.ID, "username")
-        username_form.send_keys(self.info["username"])
+            username_form = self.driver.find_element(By.ID, "username")
+            username_form.send_keys(self.info["username"])
 
-        password_form = self.driver.find_element(By.ID, "password")
-        password_form.send_keys(self.info["password"])
+            password_form = self.driver.find_element(By.ID, "password")
+            password_form.send_keys(self.info["password"])
 
-        self.driver.implicitly_wait(0.5)
-        self.driver.find_element(By.CLASS_NAME, "btn").click()
+            self.driver.implicitly_wait(0.5)
+            self.driver.find_element(By.CLASS_NAME, "btn").click()
+        except Exception as e:
+            self.main_logger.error(traceback.format_exc())
+            raise e
 
     def login_cookies(self) -> any:
         for cookie in self.info["cookies"]:
@@ -70,40 +79,24 @@ class Bot(Pages):
 
         try:
             self.restart_session()
-        except Exception as e:
-            traceback.print_exc()
-    def get_running_attacks(self, cookies: dict):
-        s = requests.session()
+        except:
+            self.main_logger.error(traceback.format_exc())
+    def get_running_attacks(self):
+        return self.driver.execute_script(self.run_js("getAttacks.js"))
 
-        headers = {
-            'User-Agent': self.info["userAgent"],
-            'Accept': '*/*',
-            'Accept-Language': 'es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Referer': 'https://www.stressthem.se/hub',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Origin': 'https://www.stressthem.se',
-            'Connection': 'keep-alive',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
-            'Content-Length': '0',
-            'TE': 'trailers'
-        }
-
-        response = s.post(
-            url="https://www.stressthem.se/request/hub/running/attacks",
-            headers=headers,
-            cookies=cookies
-        )
-        if response.status_code == 200:
-            return response.json()
-        else:
-            print(f"Error en la solicitud. Código de estado: {response.status_code}")
-
-    def stop_attack(self, id: any):
-        self.driver.execute_script("stopAttack();", id)
-        time.sleep(0.2)
+    def stop_attack(self, id: int):
+        try:
+            self.driver.execute_script("stopAttack();", id)
+            time.sleep(0.2)
+        except:
+            print(traceback.print_exception())
+            self.main_logger.error(traceback.format_exc())
+    def get_attacks(self):
+        return self.driver.execute_script("getAttacks()")
 
     def driver_quit(self) -> any:
+        try:
+            self.driver.execute_script("stopAllAttack()")
+        except:
+            pass
         self.driver.quit()

