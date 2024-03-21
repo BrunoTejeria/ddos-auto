@@ -86,7 +86,7 @@ class Presets(Selenium, SetSeleniumLogger):
 
 		# Configuración de Service
 		try:
-			self.Service.port = self.config.port
+			self.Service.port = self.config.port(self.mode)
 			...
 		except Exception as e:
 			traceback.print_exc()

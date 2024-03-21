@@ -10,15 +10,32 @@ import logging
 import requests
 import time
 import traceback
+import json
+from typing import Union, Literal, List, Any, Dict
 
 from utils.pages import Pages
 from utils.execute_js import ExecuteJs
 
 class Bot(Pages, ExecuteJs):
-    def __init__(self, driver: webdriver.Chrome, info: dict, main_logger: logging) -> None:
+    def __init__(
+        self,
+        driver: webdriver.Chrome,
+        main_logger: logging,
+        username: str,
+        password: str,
+        user_agent: Union[str, None] = None,
+        cookies: Union[List[Dict[str, Any]], None] = None,
+        *args,
+        **kwargs
+    ) -> None:
         self.main_logger = main_logger
         self.driver = driver
-        self.info = info
+        self.info = {
+            "cookies": cookies,
+            "username": username,
+            "password": password,
+            "userAgent": user_agent
+        }
         self.driver.get("https://www.stressthem.se")
         self.driver.implicitly_wait(0.5)
 
@@ -27,7 +44,7 @@ class Bot(Pages, ExecuteJs):
 
     def get_cookies(self) -> dict:
         cookies = self.driver.get_cookies()
-        return {cookie['name']: cookie['value'] for cookie in cookies}
+        return json.dumps({cookie['name']: cookie['value'] for cookie in cookies})
 
     def restart_session(self):
         self.driver.execute_script("location.reload();")
@@ -40,8 +57,10 @@ class Bot(Pages, ExecuteJs):
         try:
             self.login_page()
             if EC.title_is("DDoS-Guard"):
+                self.driver.headless = False
                 print("Debes de solucionar el captcha para seguir si tiene modo con --headless cámbialo")
                 WebDriverWait(self.driver, 100).until(EC.title_is("Login Portal"))
+            self.driver.headless = True
 
             username_form = self.driver.find_element(By.ID, "username")
             username_form.send_keys(self.info["username"])

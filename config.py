@@ -8,12 +8,12 @@ import json
 
 
 class Config:
-    def __init__(self, *args, **kwds) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         with open("./config.json", "r") as f:
             self.config = json.load(f)
 
         self.attack = self.attack()
-        self.accounts = self.accounts()
+        self.account = self.account()
         self.cookies = self.cookies()
         self.proxies = self.proxies()
         self.drivers = self.drivers()
@@ -22,11 +22,12 @@ class Config:
         self.selenium_logs = self.selenium_logs()
         self.presets = self.presets()
         self.logs = self.logs()
+        self.port = None # Función de llamar atributo deshabilitada, llama a el método port()
 
     def attack(self) -> dict:
         return self.config["attack"]
-    def accounts(self) -> dict:
-        return self.config["accounts"]
+    def account(self) -> dict:
+        return self.config["account"]
 
     def cookies(self) -> dict:
         return self.config["cookies"]
@@ -34,7 +35,6 @@ class Config:
         return self.config["logs"]
 
 
-    # NOTE: no se si poner que se guarde como diccionario o lista
     def presets(self) -> dict:
         return self.config["selenium"]["presets"]
 
@@ -54,6 +54,9 @@ class Config:
 
     def selenium_logs(self) -> dict:
         return self.config["selenium"]["logs"]
+
+    def port(self, preset: str) -> int:
+        return self.config[preset]["port"]
 
 
 

