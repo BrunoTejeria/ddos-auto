@@ -57,9 +57,11 @@ class Bot(Pages, ExecuteJs):
         try:
             self.login_page()
             if EC.title_is("DDoS-Guard"):
-                self.driver.headless = False
-                print("Debes de solucionar el captcha para seguir si tiene modo con --headless cámbialo")
-                WebDriverWait(self.driver, 100).until(EC.title_is("Login Portal"))
+                try:
+                    WebDriverWait(self.driver, 5).until(EC.title_is("Login Portal"))
+                except:
+                    print("Quizás debas de solucionar el captcha para seguir si tienes el headless activado cambia a modo debug")
+                
             self.driver.headless = True
 
             username_form = self.driver.find_element(By.ID, "username")
