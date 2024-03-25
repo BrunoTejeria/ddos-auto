@@ -23,7 +23,7 @@ main_logger.addHandler(logging.FileHandler(config.logs["main"]))
 main_logger.setLevel(logging.DEBUG)
 
 presets = Presets(driver_type=config.driver)
-service, options = presets.default()
+service, options = presets.set("default")
 
 console = Console()
 

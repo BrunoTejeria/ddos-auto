@@ -48,91 +48,44 @@ class Presets(Selenium, SetSeleniumLogger):
 
 		return
 
-	def test_preset(
+	def set(
 		self,
+		preset: Union[str, None] = None,
 		**kwargs
 	) -> Union[
 			Tuple[ChromeService, ChromeOptions],
 			Tuple[FirefoxService, FirefoxOptions],
 			Tuple[EdgeService, EdgeOptions]
 		]:
-		self.mode = self.test_preset.__name__
 
-		# Configuración de Service
+		if preset:
+			self.mode = preset
+		else:
+			self.mode = "default"
+
+		self._headless: Union[True, False, None] = ...
+		self._port_switch: Union[True, False, None] = ...
+		self._port: Union[int, None] = ...
+		self._logs: Union[True, False, None] = ...
+		self._debug: Union[True, False, None] = ...
+		self._cookies: Union[True, False, None] = ...
+
 		try:
-			...
-		except Exception as e:
-			traceback.print_exc()
+			if self.config.presets[preset]["headless"] == True:
+				self.headless()
 
-		# Configuración de Options
-		try:
-			...
-		except Exception as e:
-			traceback.print_exc()
+			if self.config.presets[preset]["portSwitch"] == True:
+				self.Service.port = self.config.presets[preset]["port"]
 
-		# Configurar logger
-		try:
-			self.log_error()
-		except Exception as e:
-			traceback.print_exc()
+			if self.config.presets[preset]["logs"] == True:
+				if self.config.presets[preset]["debug"]:
+					self.log_debug()
+					self.Options.set_capability(self.capability["logging"], {"browser": "ALL", "performance": "ALL"})
+					self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": self.config.selenium_logs["options"]}})
+				elif self.config.presets[preset]["debug"] == False:
+					self.log_info()
 
-		return self.Service, self.Options
+		finally:
+			return self.Service, self.Options
 
-	def default(
-		self,
-		**kwargs
-	) -> Any:
-		self.mode = self.default.__name__
-
-		# Configuración de Service
-		try:
-			self.Service.port = self.config.port(self.mode)
-			...
-		except Exception as e:
-			traceback.print_exc()
-
-		# Configuración de Options
-		try:
-			self.headless()
-		except Exception as e:
-			traceback.print_exc()
-
-		# Configurar logger
-		try:
-			self.log_info()
-		except Exception as e:
-			traceback.print_exc()
-
-		return self.Service, self.Options
-
-	def debug(
-		self,
-		**kwargs
-	) -> Union[
-			Tuple[ChromeService, ChromeOptions],
-			Tuple[FirefoxService, FirefoxOptions],
-			Tuple[EdgeService, EdgeOptions]
-		]:
-		self.mode = self.debug.__name__
-		# Configuración de Service
-		try:
-			...
-		except Exception as e:
-			traceback.print_exc()
-
-		# Configuración de Options
-		try:
-			self.change_port()
-			self.Options.set_capability(self.capability["logging"], {"browser": "ALL", "performance": "ALL"})
-			self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": self.config.selenium_logs["options"]}})
-			...
-		except Exception as e:
-			traceback.print_exc()
-
-		# Configurar logger
-		try:
-			self.log_debug()
-		except Exception as e:
-			traceback.print_exc()
-
-		return self.Service, self.Options
+	

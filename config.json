@@ -37,15 +37,27 @@
         "presets": {
             "debug": {
                 "headless": false,
-                "port": 8640
+                "port": 8640,
+                "logs": true,
+                "debug": true
             },
             "default": {
                 "headless": true,
-                "port": 4444
+                "port": 4444,
+                "logs": true,
+                "debug": true
             },
             "test_preset": {
                 "headless": true,
-                "port": 4444
+                "port": 4444,
+                "logs": false,
+                "debug": false
+            },
+            "None": {
+                "headless": null,
+                "port": null,
+                "logs": null,
+                "debug": null
             }
         },
         "proxies": [
