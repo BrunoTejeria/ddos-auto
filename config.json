@@ -1,8 +1,8 @@
 {
-    "account": [
-        "testaccount",
-        "123456789"
-    ],
+    "account": {
+        "username": "testaccount",
+        "password": "123456789"
+    },
     "attack": {
         "ip": "8.8.8.8",
         "method": "DNS",

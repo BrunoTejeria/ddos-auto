@@ -31,6 +31,7 @@ bot.DDoS_page()
 bot.close_button()
 
 cookies = bot.get_cookies()
+# NOTE: No se si guardarlos en config.json o en cookies.json
 with open("cookies.json", "w", encoding="utf-8") as f:
     f.write(cookies)
 
