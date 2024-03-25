@@ -38,24 +38,28 @@
             "debug": {
                 "headless": false,
                 "port": 8640,
+                "portSwitch": true,
                 "logs": true,
                 "debug": true
             },
             "default": {
                 "headless": true,
                 "port": 4444,
+                "portSwitch": true,
                 "logs": true,
                 "debug": true
             },
             "test_preset": {
                 "headless": true,
                 "port": 4444,
+                "portSwitch": true,
                 "logs": false,
                 "debug": false
             },
             "None": {
                 "headless": null,
                 "port": null,
+                "portSwitch": null,
                 "logs": null,
                 "debug": null
             }

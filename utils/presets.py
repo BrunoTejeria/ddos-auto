@@ -50,7 +50,7 @@ class Presets(Selenium, SetSeleniumLogger):
 
 	def set(
 		self,
-		preset: Union[str, None] = None,
+		preset: str = "default",
 		**kwargs
 	) -> Union[
 			Tuple[ChromeService, ChromeOptions],
@@ -58,32 +58,32 @@ class Presets(Selenium, SetSeleniumLogger):
 			Tuple[EdgeService, EdgeOptions]
 		]:
 
-		if preset:
-			self.mode = preset
-		else:
-			self.mode = "default"
 
-		self._headless: Union[True, False, None] = ...
-		self._port_switch: Union[True, False, None] = ...
-		self._port: Union[int, None] = ...
-		self._logs: Union[True, False, None] = ...
-		self._debug: Union[True, False, None] = ...
+		self.mode = preset
+
+
 		self._cookies: Union[True, False, None] = ...
+		self._debug: Union[True, False, None] = self.config.presets[preset]["debug"]
+		self._headless: Union[True, False, None] = self.config.presets[preset]["headless"]
+		self._logs: Union[True, False, None] = self.config.presets[preset]["logs"]
+		self._port: Union[int, None] = self.config.presets[preset]["port"]
+		self._port_switch: Union[True, False, None] = self.config.presets[preset]["portSwitch"]
+
 
 		try:
-			if self.config.presets[preset]["headless"] == True:
+			if self._headless == True:
 				self.headless()
 
-			if self.config.presets[preset]["portSwitch"] == True:
-				self.Service.port = self.config.presets[preset]["port"]
-
-			if self.config.presets[preset]["logs"] == True:
-				if self.config.presets[preset]["debug"]:
+			if self._logs == True:
+				if self._debug:
 					self.log_debug()
 					self.Options.set_capability(self.capability["logging"], {"browser": "ALL", "performance": "ALL"})
 					self.Options.set_capability(self.capability["options"], {"perfLoggingPrefs": {"traceCategories": self.config.selenium_logs["options"]}})
-				elif self.config.presets[preset]["debug"] == False:
+				elif self._debug == False:
 					self.log_info()
+
+			if self._port_switch == True:
+				self.Service.port = self.config.presets[preset]["port"]
 
 		finally:
 			return self.Service, self.Options

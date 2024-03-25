@@ -30,7 +30,7 @@ class Config:
         return self.config["account"]
 
     def cookies(self) -> dict:
-        return self.config["cookies"]
+        return self.cookies()
     def logs(self) -> dict:
         return self.config["logs"]
 
@@ -47,16 +47,24 @@ class Config:
     def driver(self) -> str:
         return self.config["selenium"]["driver"]
 
-    def user_agents(self) -> list:
-        with open("./user-agents.json", "r", encoding="utf-8") as f:
-            file = f.read()
-            return json.loads(file)
-
     def selenium_logs(self) -> dict:
         return self.config["selenium"]["logs"]
 
     def port(self, preset: str) -> int:
         return self.config[preset]["port"]
+
+    def user_agents(self) -> list:
+        with open("./user-agents.json", "r", encoding="utf-8") as f:
+            file = f.read()
+            return json.loads(file)
+
+    def cookies(self) -> dict:
+        with open("./cookies.json", "r") as f:
+            return json.load(f)
+
+
+
+
 
 
 
