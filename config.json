@@ -1,9 +1,7 @@
 {
-    "accounts": [
-        [
-            "testaccount",
-            "123456789"
-        ]
+    "account": [
+        "testaccount",
+        "123456789"
     ],
     "attack": {
         "ip": "8.8.8.8",
@@ -13,12 +11,10 @@
     },
     "cookies": [
         {
-            "exp": "exp",
             "key": "key",
             "value": "value"
         },
         {
-            "exp": "exp",
             "key": "key",
             "value": "value"
         }
