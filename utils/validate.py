@@ -14,6 +14,6 @@ class ipv4():
         else:
             return False
 
-class ipv4:
+class ipv6:
     def __new__(cls) -> bool:
         ...
