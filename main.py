@@ -11,11 +11,11 @@ import threading
 from bot import Bot
 from config import Config
 from utils.presets import Presets
-import utils.start
+from utils.start import CheckInit
+from utils.interface import *
 
 
-
-
+CheckInit()
 config = Config()
 
 main_logger = logging.getLogger()
@@ -28,38 +28,14 @@ service, options = presets.set()
 console = Console()
 
 
-
-
-
-
-
-
-
-def get_user_input():
-    
-
-    ip = console.input(f"Ingrese la dirección IP (por defecto: {config.attack['ip']}): ")
-    if ip == "":
-        ip = config.attack["ip"]
-
-    port = console.input(f"Ingrese el puerto (por defecto: {config.attack['port']}): ")
-    if port == "":
-        port = config.attack["port"]
-
-    return ip, port
-
-ip, port = get_user_input()
-
-
 main_logger = logging.getLogger()
 main_logger.addHandler(logging.FileHandler(config.logs["main"]))
 main_logger.setLevel(logging.ERROR)
 
 
-
+ip, port = attack_info_input(config=config, console=console)
 thr = []
 x = 0
-
 
 
 def main():
@@ -92,7 +68,7 @@ def main():
         def run(self) -> any:
             try:
                 bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-                print(f"-----------------\nejecución: {self.count}\ncuenta: {config.account['username']}\n-----------------")
+                attack_status_output(count=self.count, config=config)
                 time.sleep(config.attack["time"])
 
             finally:
