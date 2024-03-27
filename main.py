@@ -68,7 +68,7 @@ def main():
         def run(self) -> any:
             try:
                 bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-                attack_status_output(count=self.count, config=config)
+                attack_status_output(count=self.count, config=config, console=console)
                 time.sleep(config.attack["time"])
 
             finally:
