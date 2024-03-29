@@ -22,13 +22,18 @@ def attack_info_input(
     ip: ipv4 = console.input(f"Ingrese la dirección IP (por defecto: {config.attack['ip']}): ")
 
         #console.print(f"Formato de ip incorrecto tomando valor por defecto ({config.attack['ip']})", style="red")
-    
+    if not ip == "":
+        ...
+    else:
+        ip = config.attack["ip"]
 
     port: int = console.input(f"Ingrese el puerto (por defecto: {config.attack['port']}): ")
     if not port == "":
-        if port <= 65535:
+        if int(port) <= 65535:
             pass
         else:
             console.print(f"Pon un puerto en el rango de [0 - 65535]. Tomando valor por defecto ({config.attack['port']})", style="red")
+    else:
+        port = config.attack["port"]
 
     return ip, port

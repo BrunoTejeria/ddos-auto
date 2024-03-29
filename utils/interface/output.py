@@ -4,12 +4,13 @@ from rich.table import Table
 import datetime
 
 from config import Config
-from utils.validate import ipv4
+from utils.validate import ipv4, port
 
 
 def attack_status_output(
     count: int,
-    #attack_host: ipv4 | None = None,
+    attack_host: ipv4 | None = None,
+    attack_port: port | None = None,
     config: Config = Config(),
     console: Console = Console(),
     eject_time: float | None = datetime.datetime.now(),
@@ -22,9 +23,9 @@ def attack_status_output(
 
     table.add_row("Execution Number", str(count))
     table.add_row("Account", str(config.account["username"]))
-    table.add_row("Host", str(config.attack["ip"]))
-    table.add_row("Port", str(config.attack["port"]))
+    table.add_row("Host", str(attack_host))
+    table.add_row("Port", str(attack_port))
     table.add_row("Method", str(config.attack["method"]))
     table.add_row("Attack Time", str(config.attack["time"]))
-    table.add_row("Execution Time", str(datetime.datetime.now()))
+    table.add_row("Execution Time", str(eject_time))
     console.print(table)
