@@ -18,9 +18,6 @@ from utils.interface import *
 CheckInit()
 config = Config()
 
-main_logger = logging.getLogger()
-main_logger.addHandler(logging.FileHandler(config.logs["main"]))
-main_logger.setLevel(logging.DEBUG)
 
 presets = Presets(driver_type=config.driver)
 service, options = presets.set()
@@ -68,7 +65,7 @@ def main():
         def run(self) -> any:
             try:
                 bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-                attack_status_output(count=self.count, config=config, console=console)
+                attack_status_output(count=self.count, config=config, console=console, attack_host=ip, attack_port=port, eject_time=datetime.datetime.now())
                 time.sleep(config.attack["time"])
 
             finally:
