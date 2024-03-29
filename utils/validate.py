@@ -23,3 +23,7 @@ class ipv6:
             return True
         else:
             return False
+
+class port:
+    def __new__(cls) -> bool:
+        return True
