@@ -8,8 +8,6 @@
     <img src="./.github/images/attack_example.png" alt="Alternative text">
 </p>
 
-<hr>
-
 ## Installation
 
 ### Note
