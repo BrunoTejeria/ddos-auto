@@ -8,7 +8,6 @@
     <img src="./.github/images/attack_example.png" alt="Texto alternativo">
 </p>
 
-<hr>
 
 ## Instalacion
 
