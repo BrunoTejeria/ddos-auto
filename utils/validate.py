@@ -1,29 +1,31 @@
 import re
 
-class ipv4():
-    def __new__(cls) -> bool:
+class ipv4:
+    @staticmethod
+    def __new__(cls, ip_address) -> bool:
         pattern = r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$"
-        if re.match(pattern, cls):
-            componentes = cls.split(".")
-            for componente in componentes:
-                if not 0 <= int(componente) <= 255:
+        if re.match(pattern, ip_address):
+            components = ip_address.split(".")
+            for component in components:
+                if not 0 <= int(component) <= 255:
                     return False
             return True
         else:
             return False
 
 class ipv6:
-    def __new__(cls) -> bool:
-        pattern = r""
-        if re.match(pattern, cls):
-            componentes = cls.split(":")
-            for componente in componentes:
-                if ...:
-                    return False
+    @staticmethod
+    def __new__(cls, ip_address) -> bool:
+        pattern = r"^(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}$"
+        if re.match(pattern, ip_address, re.IGNORECASE):
             return True
         else:
             return False
 
 class port:
-    def __new__(cls) -> bool:
-        return True
+    @staticmethod
+    def __new__(cls, port_number) -> bool:
+        if 0 <= port_number <= 65535:
+            return True
+        else:
+            return False
