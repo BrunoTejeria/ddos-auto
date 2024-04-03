@@ -13,13 +13,15 @@ def attack_status_output(
     attack_port: port | None = None,
     config: Config = Config(),
     console: Console = Console(),
+    style_key: str | None = None,
+    style_value: str | None = None,
     eject_time: float | None = datetime.datetime.now(),
     *args: Any,
     **kwargs: Any
 ) -> None:
     table = Table(show_header=False, min_width=32, show_lines=True, caption_justify="center")
-    table.add_column()
-    table.add_column()
+    table.add_column(style=style_key)
+    table.add_column(style=style_value)
 
     table.add_row("Execution Number", str(count))
     table.add_row("Account", str(config.account["username"]))

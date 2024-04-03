@@ -30,8 +30,7 @@ main_logger.addHandler(logging.FileHandler(config.logs["main"]))
 main_logger.setLevel(logging.ERROR)
 
 
-ip, port = attack_info_input(config=config, console=console)
-thr = []
+host, port = attack_info_input(config=config, console=console)
 x = 0
 
 
@@ -64,8 +63,17 @@ def main():
 
         def run(self) -> any:
             try:
-                bot.start_attack(ip, port, config.attack["time"], config.attack["method"])
-                attack_status_output(count=self.count, config=config, console=console, attack_host=ip, attack_port=port, eject_time=datetime.datetime.now())
+                bot.start_attack(host, port, config.attack["time"], config.attack["method"])
+                attack_status_output(
+                    count=self.count,
+                    config=config,
+                    console=console,
+                    style_key="bold green",
+                    style_value="white",
+                    attack_host=host,
+                    attack_port=port,
+                    eject_time=datetime.datetime.now()
+                )
                 time.sleep(config.attack["time"])
 
             finally:
