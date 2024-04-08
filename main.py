@@ -35,7 +35,6 @@ x = 0
 
 
 def main():
-    
     try:
         driver = webdriver.Chrome(service=service, options=options)
         bot = Bot(
@@ -44,7 +43,6 @@ def main():
             username=config.account["username"],
             password=config.account["password"]
             )
-
     except AttributeError as e:
         raise e
 
